@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Defense Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <a href="/" class="nav-link">← EXPLORE THREATS</a>
+            <span class="nav-title">QUANTUM TRAINING HUB</span>
+            <a href="/reset" class="nav-link reset-btn">SYSTEM RESET</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <section id="module1" class="module-card">
+            <div class="card-header">
+                <span class="module-num">01</span>
+                <h2>RSA Factorization Attack</h2>
+            </div>
+            <div class="card-body">
+                <p>Simulate how Shor's Algorithm cracks RSA-2048 encryption.</p>
+                <form action="/rsa_encrypt" method="POST" class="module-form">
+                    <textarea name="plaintext" placeholder="Enter sensitive data..." required></textarea>
+                    <button type="submit" class="neon-btn cyan">ENCRYPT RSA</button>
+                </form>
+                {% if session.m1_ciphertext %}
+                    <div class="result-box">
+                        <p class="label">ENCRYPTED DATA:</p>
+                        <code>{{ session.m1_ciphertext[:60] }}...</code>
+                        <a href="/rsa_attack"><button class="attack-btn">LAUNCH QUANTUM ATTACK</button></a>
+                    </div>
+                    {% if session.m1_result %}
+                        <div class="alert fail">
+                            <strong>ATTACK SUCCESS:</strong> Data Decrypted: {{ session.m1_result }}
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="module2" class="module-card">
+            <div class="card-header">
+                <span class="module-num">02</span>
+                <h2>Digital Signature Forgery</h2>
+            </div>
+            <div class="card-body">
+                <p>Can an attacker forge your signature using a Quantum computer?</p>
+                <form action="/sign" method="POST" class="module-form">
+                    <textarea name="signature_message" placeholder="Legal contract text..." required></textarea>
+                    <button type="submit" class="neon-btn cyan">SIGN WITH ECC</button>
+                </form>
+                {% if session.m2_sig %}
+                    <div class="result-box">
+                        <p class="label">VALID SIGNATURE:</p>
+                        <code>{{ session.m2_sig[:60] }}...</code>
+                        <a href="/forge"><button class="attack-btn">EXECUTE FORGERY</button></a>
+                    </div>
+                    {% if session.m2_fake_sig %}
+                        <div class="alert fail">
+                            <strong>FORGERY SUCCESS:</strong> Unauthorized Message Signed: {{ session.m2_fake_msg }}
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="module3" class="module-card">
+            <div class="card-header">
+                <span class="module-num">03</span>
+                <h2>Key Exchange (ECC vs Kyber)</h2>
+            </div>
+            <div class="card-body">
+                <a href="/key_exchange"><button class="neon-btn magenta">RUN KEY EXCHANGE TEST</button></a>
+                {% if session.m3_ecc_secret %}
+                    <div class="comparison-grid">
+                        <div class="comp-box broken">
+                            <h4>Classical ECC</h4>
+                            <p>Status: ❌ CRACKED</p>
+                            <code>{{ session.m3_ecc_secret }}</code>
+                        </div>
+                        <div class="comp-box secure">
+                            <h4>Post-Quantum Kyber</h4>
+                            <p>Status: ✅ SECURE</p>
+                            <code>INTERCEPTION FAILED</code>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="module4" class="module-card">
+            <div class="card-header">
+                <span class="module-num">04</span>
+                <h2>RSA vs Kyber (Encrypted Comms)</h2>
+            </div>
+            <div class="card-body">
+                <a href="/rsa_vs_kyber"><button class="neon-btn magenta">COMPARE RESILIENCE</button></a>
+                {% if session.m4_active %}
+                    <div class="comparison-grid">
+                        <div class="comp-box broken">
+                            <h4>Standard RSA</h4>
+                            <p>Status: ❌ VULNERABLE</p>
+                            <code>{{ session.m4_rsa_eve }}</code>
+                        </div>
+                        <div class="comp-box secure">
+                            <h4>Quantum Kyber</h4>
+                            <p>Status: ✅ PROTECTED</p>
+                            <code>DECRYPTION IMPOSSIBLE</code>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="module5" class="module-card">
+            <div class="card-header">
+                <span class="module-num">05</span>
+                <h2>Performance & Key Analysis</h2>
+            </div>
+            <div class="card-body">
+                <p>Observe the physical trade-off between security and data size.</p>
+                <a href="/performance_test"><button class="neon-btn cyan">ANALYZE KEY SIZES</button></a>
+                {% if session.m5_active %}
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <span>RSA-2048 Public Key:</span>
+                            <strong>~256 Bytes</strong>
+                        </div>
+                        <div class="stat-item highlight">
+                            <span>Kyber-1024 Public Key:</span>
+                            <strong>~1568 Bytes</strong>
+                        </div>
+                        <p class="note">*Kyber requires 6x more bandwidth, creating a challenge for IoT devices.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+</body>
+</html>
